@@ -225,6 +225,16 @@ Exact tool names and JSON input schemas are advertised through tools/list.
 - move Java types between packages;
 - rename packages and update references.
 
+### Mylyn
+
+When the corresponding Mylyn bundles are installed:
+
+- list and inspect configured Mylyn Task Repositories;
+- list Mylyn Builds servers such as Jenkins;
+- read cached plans and recent builds;
+- optionally refresh a build server configuration through its Mylyn connector;
+- redact passwords, tokens and credential properties from all tool output.
+
 ### Git
 
 Git operations use Eclipse EGit repository mappings and JGit APIs:

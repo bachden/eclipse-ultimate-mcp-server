@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import nhb.eclipse.plugin.mcp.ultimate.tools.coder.CoderTools;
 import nhb.eclipse.plugin.mcp.ultimate.tools.git.GitTools;
 import nhb.eclipse.plugin.mcp.ultimate.tools.ide.IdeTools;
+import nhb.eclipse.plugin.mcp.ultimate.tools.mylyn.MylynTools;
 import nhb.eclipse.plugin.mcp.ultimate.tools.runner.RunnerTools;
 
 /** Registry of all MCP tools exposed by the server, grouped by origin. */
@@ -21,6 +22,7 @@ public final class ToolRegistry {
         CoderTools.registerAll(this::register);
         GitTools.registerAll(this::register);
         RunnerTools.registerAll(this::register);
+        MylynTools.registerAll(this::register);
     }
 
     private void register(McpTool tool) {

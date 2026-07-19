@@ -37,5 +37,11 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.p2.metadata,
  org.eclipse.equinox.p2.repository,
  org.eclipse.m2e.core;resolution:=optional,
+ org.eclipse.mylyn.commons.core;resolution:=optional,
+ org.eclipse.mylyn.commons.repositories.core;resolution:=optional,
+ org.eclipse.mylyn.tasks.core;resolution:=optional,
+ org.eclipse.mylyn.tasks.ui;resolution:=optional,
+ org.eclipse.mylyn.builds.core;resolution:=optional,
+ org.eclipse.mylyn.builds.ui;resolution:=optional,
  com.google.gson
 Import-Package: com.sun.net.httpserver
