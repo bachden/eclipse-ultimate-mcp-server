@@ -45,10 +45,10 @@ public class ListMylynBuildServersTool implements McpTool {
         IBuildModel model = BuildsUi.getModel();
         List<IBuildServer> servers = new ArrayList<>(model.getServers());
         servers.removeIf(server -> !connectorKind.isEmpty() && !connectorKind.equals(server.getConnectorKind()));
-        servers.sort(Comparator
-                .comparing(IBuildServer::getConnectorKind, Comparator.nullsFirst(String::compareToIgnoreCase))
-                .thenComparing(IBuildServer::getName, Comparator.nullsFirst(String::compareToIgnoreCase))
-                .thenComparing(IBuildServer::getRepositoryUrl, Comparator.nullsFirst(String::compareToIgnoreCase)));
+        servers.sort(
+                Comparator.comparing(IBuildServer::getConnectorKind, Comparator.nullsFirst(String::compareToIgnoreCase))
+                        .thenComparing(IBuildServer::getName, Comparator.nullsFirst(String::compareToIgnoreCase))
+                        .thenComparing(MylynJson::serverUrl, Comparator.nullsFirst(String::compareToIgnoreCase)));
 
         JsonArray entries = new JsonArray();
         for (IBuildServer server : servers) {

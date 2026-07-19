@@ -22,6 +22,7 @@ public final class MylynTools {
         if (Platform.getBundle("org.eclipse.mylyn.builds.ui") != null) {
             register.accept(new ListMylynBuildServersTool());
             register.accept(new GetMylynBuildServerTool());
+            register.accept(new GetMylynBuildLogTool());
         }
     }
 }

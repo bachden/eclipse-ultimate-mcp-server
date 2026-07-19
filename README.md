@@ -231,7 +231,7 @@ When the corresponding Mylyn bundles are installed:
 
 - list and inspect configured Mylyn Task Repositories;
 - list Mylyn Builds servers such as Jenkins;
-- read cached plans and recent builds;
+- read cached plans, recent builds and bounded console logs;
 - optionally refresh a build server configuration through its Mylyn connector;
 - redact passwords, tokens and credential properties from all tool output.
 

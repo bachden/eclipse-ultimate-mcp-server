@@ -111,7 +111,8 @@ public class GetMylynBuildServerTool implements McpTool {
     }
 
     private IBuildServer findServer(List<IBuildServer> servers, String connectorKind, String repositoryUrl) {
-        List<IBuildServer> matches = servers.stream().filter(server -> repositoryUrl.equals(server.getRepositoryUrl()))
+        List<IBuildServer> matches = servers.stream()
+                .filter(server -> repositoryUrl.equals(MylynJson.serverUrl(server)))
                 .filter(server -> connectorKind.isEmpty() || connectorKind.equals(server.getConnectorKind())).toList();
         if (matches.size() != 1) {
             throw new IllegalArgumentException("Mylyn build server selector matched " + matches.size()

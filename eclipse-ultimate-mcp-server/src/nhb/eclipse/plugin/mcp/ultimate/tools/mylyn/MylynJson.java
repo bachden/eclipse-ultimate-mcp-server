@@ -69,7 +69,7 @@ final class MylynJson {
         addString(json, "connectorKind", server.getConnectorKind());
         addString(json, "name", server.getName());
         addString(json, "label", server.getLabel());
-        addString(json, "repositoryUrl", server.getRepositoryUrl());
+        addString(json, "repositoryUrl", serverUrl(server));
         addString(json, "url", server.getUrl());
         addDate(json, "refreshDate", server.getRefreshDate());
         json.add("status", status(server.getElementStatus()));
@@ -174,7 +174,19 @@ final class MylynJson {
             return true;
         }
         return left != null && right != null && equal(left.getConnectorKind(), right.getConnectorKind())
-                && equal(left.getRepositoryUrl(), right.getRepositoryUrl());
+                && equal(serverUrl(left), serverUrl(right));
+    }
+
+    static String serverUrl(IBuildServer server) {
+        String url = server.getRepositoryUrl();
+        RepositoryLocation location = server.getLocation();
+        if ((url == null || url.isBlank()) && location != null) {
+            url = location.getUrl();
+        }
+        if (url == null || url.isBlank()) {
+            url = server.getUrl();
+        }
+        return url;
     }
 
     static JsonObject status(IStatus status) {
