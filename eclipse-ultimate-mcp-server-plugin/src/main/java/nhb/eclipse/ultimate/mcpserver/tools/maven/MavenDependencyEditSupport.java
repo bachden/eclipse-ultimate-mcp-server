@@ -66,7 +66,7 @@ final class MavenDependencyEditSupport {
         }
         String expectedType = normalizeType(type);
         String expectedClassifier = normalize(classifier);
-        for (Element dependency : PomHelper.findDependencies(dependencies)) {
+        for (Element dependency : PomEdits.findChilds(dependencies, PomEdits.DEPENDENCY)) {
             if (!groupId.equals(childText(dependency, PomEdits.GROUP_ID))
                     || !artifactId.equals(childText(dependency, PomEdits.ARTIFACT_ID))) {
                 continue;

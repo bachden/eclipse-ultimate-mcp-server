@@ -77,6 +77,7 @@ public class ConfigureMavenDependencyTool implements McpTool {
                         arguments.get("optional").getAsBoolean() ? "true" : "");
             }
             replaceExclusions(dependency, arguments);
+            PomEdits.format(dependency);
         }, "Configure Maven dependency " + groupId + ":" + artifactId, refreshProject, forceDependencyUpdate);
 
         JsonObject result = new JsonObject();

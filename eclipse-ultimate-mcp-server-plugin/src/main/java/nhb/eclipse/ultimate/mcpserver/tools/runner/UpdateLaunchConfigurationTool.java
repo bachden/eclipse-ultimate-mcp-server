@@ -1,5 +1,9 @@
 package nhb.eclipse.ultimate.mcpserver.tools.runner;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
@@ -9,10 +13,7 @@ import nhb.eclipse.ultimate.mcpserver.mcp.McpTool;
 import nhb.eclipse.ultimate.mcpserver.tools.Schemas;
 
 /**
- * Updates attributes on an existing saved launch configuration, given its name. Only the
- * attribute keys passed in {@code attributes} are changed; every other attribute already on the
- * configuration is left untouched. Use get_launch_configuration first to see current values and
- * exact attribute key names.
+ * Updates selected attributes on an existing saved launch configuration.
  */
 public class UpdateLaunchConfigurationTool implements McpTool {
 
@@ -24,8 +25,8 @@ public class UpdateLaunchConfigurationTool implements McpTool {
     @Override
     public String description() {
         return "Update attributes on an existing saved launch configuration by name. Only the given attribute "
-                + "keys are changed; everything else on the configuration is preserved. Pass null for a value to "
-                + "remove that attribute. See get_launch_configuration for current values and exact key names.";
+                + "keys are changed; everything else is preserved. Pass null to remove an attribute. Primitive "
+                + "values, arrays and string-valued objects are persisted with their Eclipse launch attribute types.";
     }
 
     @Override
@@ -35,8 +36,8 @@ public class UpdateLaunchConfigurationTool implements McpTool {
         JsonObject attributes = new JsonObject();
         attributes.addProperty("type", "object");
         attributes.addProperty("description",
-                "Attribute key -> value map to merge in. Values may be strings, numbers, booleans, arrays of "
-                        + "strings, or null to remove that attribute.");
+                "Attribute key -> value map to merge in. Values may be strings, integers, booleans, arrays of "
+                        + "primitive values, string-valued objects, or null to remove that attribute.");
         schema.getAsJsonObject("properties").add("attributes", attributes);
         return Schemas.required(schema, "name", "attributes");
     }
@@ -51,8 +52,30 @@ public class UpdateLaunchConfigurationTool implements McpTool {
 
         ILaunchConfiguration config = LaunchConfigurationLookup.find(name);
         ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-        LaunchAttributes.apply(wc, attributes);
-        wc.doSave();
-        return "Updated launch configuration \"" + name + "\" (" + attributes.size() + " attribute(s))";
+        Map<String, Object> expected = LaunchAttributes.apply(wc, attributes);
+        ILaunchConfiguration saved = wc.doSave();
+        verifyPersisted(saved, expected);
+        return "Updated and verified launch configuration \"" + saved.getName() + "\" (" + expected.size()
+                + " attribute(s))";
+    }
+
+    private static void verifyPersisted(ILaunchConfiguration saved, Map<String, Object> expected) throws Exception {
+        Map<String, Object> persisted = LaunchConfigurationLookup.find(saved.getName()).getAttributes();
+        List<String> mismatches = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : expected.entrySet()) {
+            String key = entry.getKey();
+            Object expectedValue = entry.getValue();
+            if (expectedValue == null) {
+                if (persisted.containsKey(key)) {
+                    mismatches.add(key + " was not removed");
+                }
+            } else if (!expectedValue.equals(persisted.get(key))) {
+                mismatches.add(key + " expected " + expectedValue + " but found " + persisted.get(key));
+            }
+        }
+        if (!mismatches.isEmpty()) {
+            throw new IllegalStateException(
+                    "Launch configuration save verification failed: " + String.join("; ", mismatches));
+        }
     }
 }

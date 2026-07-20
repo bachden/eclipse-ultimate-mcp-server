@@ -2,13 +2,17 @@ package nhb.eclipse.ultimate.mcpserver.tools.runner;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import nhb.eclipse.ultimate.mcpserver.mcp.McpTool;
 import nhb.eclipse.ultimate.mcpserver.tools.Schemas;
 
-/** Returns every attribute of a single saved launch configuration, not just the common ones. */
+/**
+ * Returns every attribute of a single saved launch configuration, not just the
+ * common ones.
+ */
 public class GetLaunchConfigurationTool implements McpTool {
 
     @Override
@@ -40,18 +44,10 @@ public class GetLaunchConfigurationTool implements McpTool {
         result.addProperty("typeId", config.getType() != null ? config.getType().getIdentifier() : null);
         result.addProperty("typeName", config.getType() != null ? config.getType().getName() : null);
 
+        Gson gson = new Gson();
         JsonObject attributes = new JsonObject();
         for (var entry : config.getAttributes().entrySet()) {
-            Object value = entry.getValue();
-            if (value == null) {
-                attributes.add(entry.getKey(), null);
-            } else if (value instanceof Boolean b) {
-                attributes.addProperty(entry.getKey(), b);
-            } else if (value instanceof Number n) {
-                attributes.addProperty(entry.getKey(), n);
-            } else {
-                attributes.addProperty(entry.getKey(), String.valueOf(value));
-            }
+            attributes.add(entry.getKey(), gson.toJsonTree(entry.getValue()));
         }
         result.add("attributes", attributes);
 
