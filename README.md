@@ -195,6 +195,11 @@ curl --fail-with-body \
 
 The server accepts JSON-RPC batches. Notifications receive 202 Accepted; unsupported HTTP methods receive 405 Method Not Allowed.
 
+## Tool Documentation
+
+- [Complete tool reference](TOOLS.md): all advertised tools, descriptions and exact input contracts.
+- [AI agent instructions](AI_AGENT_INSTRUCTIONS.md): an importable Eclipse-first workflow for coding agents.
+
 ## Available Tool Groups
 
 Exact tool names and JSON input schemas are advertised through tools/list.
