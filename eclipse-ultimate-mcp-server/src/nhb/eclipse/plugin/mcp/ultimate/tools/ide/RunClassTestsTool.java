@@ -5,7 +5,10 @@ import com.google.gson.JsonObject;
 import nhb.eclipse.plugin.mcp.ultimate.mcp.McpTool;
 import nhb.eclipse.plugin.mcp.ultimate.tools.Schemas;
 
-/** Runs every test method in a single JUnit test class and blocks until completion. */
+/**
+ * Runs every test method in a single JUnit test class and blocks until
+ * completion.
+ */
 public class RunClassTestsTool implements McpTool {
 
     @Override
@@ -15,8 +18,8 @@ public class RunClassTestsTool implements McpTool {
 
     @Override
     public String description() {
-        return "Run every test method in a single JUnit test class and return the captured console output. "
-                + "Blocks until the run finishes or times out.";
+        return "Run every test method in a single JUnit test class with the JUnit 3/4/5/6 runner detected "
+                + "by Eclipse JDT, and return the captured console output. Blocks until the run finishes or times out.";
     }
 
     @Override

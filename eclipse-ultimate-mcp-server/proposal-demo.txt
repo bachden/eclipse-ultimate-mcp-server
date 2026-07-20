@@ -1,5 +1,0 @@
-Eclipse Ultimate MCP Server
-
-Status: current
-Port mode: random
-Review: pending
