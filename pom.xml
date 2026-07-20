@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>nhb.eclipse.ultimate</groupId>
-  <artifactId>eclipse-ultimate-parent</artifactId>
+  <artifactId>eclipse-ultimate</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -17,7 +17,7 @@
 
   <modules>
     <module>eclipse-ultimate.updatesite</module>
-    <module>eclipse-ultimate-mcp-server</module>
+    <module>eclipse-ultimate-mcp-server-plugin</module>
     <module>eclipse-ultimate-mcp-server-feature</module>
   </modules>
 
@@ -37,7 +37,7 @@
           <!-- Use the portable p2 target by default so local and GitHub builds resolve
                the same dependencies without relying on an installed Eclipse product. -->
           <target>
-            <file>${maven.multiModuleProjectDirectory}/eclipse-ultimate-mcp-server/${target-definition}</file>
+            <file>${maven.multiModuleProjectDirectory}/eclipse-ultimate-mcp-server-plugin/${target-definition}</file>
           </target>
         </configuration>
       </plugin>

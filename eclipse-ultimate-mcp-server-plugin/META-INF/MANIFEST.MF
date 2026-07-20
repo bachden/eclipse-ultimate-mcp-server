@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Ultimate MCP Server
-Bundle-SymbolicName: eclipse-ultimate-mcp-server;singleton:=true
+Bundle-SymbolicName: eclipse-ultimate-mcp-server-plugin;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Bach Nguyen
 Bundle-RequiredExecutionEnvironment: JavaSE-21

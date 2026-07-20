@@ -6,11 +6,11 @@
 
   <parent>
     <groupId>nhb.eclipse.ultimate</groupId>
-    <artifactId>eclipse-ultimate-parent</artifactId>
+    <artifactId>eclipse-ultimate</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>eclipse-ultimate-mcp-server</artifactId>
+  <artifactId>eclipse-ultimate-mcp-server-plugin</artifactId>
   <packaging>eclipse-plugin</packaging>
 </project>
