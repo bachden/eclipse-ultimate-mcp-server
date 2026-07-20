@@ -19,12 +19,15 @@ public class McpConnectionLog {
         public final String remoteAddress;
         public final String detail;
         public final boolean success;
+        /** Wall-clock time to handle the request, in milliseconds; -1 if not measured. */
+        public final long durationMillis;
 
-        Entry(Instant timestamp, String remoteAddress, String detail, boolean success) {
+        Entry(Instant timestamp, String remoteAddress, String detail, boolean success, long durationMillis) {
             this.timestamp = timestamp;
             this.remoteAddress = remoteAddress;
             this.detail = detail;
             this.success = success;
+            this.durationMillis = durationMillis;
         }
     }
 
@@ -33,7 +36,11 @@ public class McpConnectionLog {
     private final Deque<Entry> entries = new ConcurrentLinkedDeque<>();
 
     public void record(String remoteAddress, String detail, boolean success) {
-        entries.addLast(new Entry(Instant.now(), remoteAddress, detail, success));
+        record(remoteAddress, detail, success, -1);
+    }
+
+    public void record(String remoteAddress, String detail, boolean success, long durationMillis) {
+        entries.addLast(new Entry(Instant.now(), remoteAddress, detail, success, durationMillis));
         while (entries.size() > MAX_ENTRIES) {
             entries.pollFirst();
         }

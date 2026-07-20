@@ -2,7 +2,9 @@ package nhb.eclipse.plugin.mcp.ultimate.ui;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -12,6 +14,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -19,7 +22,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import nhb.eclipse.plugin.mcp.ultimate.server.McpConnectionLog;
 
-/** Shows the most recent client connections/requests to the MCP HTTP server. */
+/** Shows the most recent client connections/requests to the MCP HTTP server, with response times. */
 public class McpConnectionsDialog extends TitleAreaDialog {
 
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss")
@@ -48,11 +51,15 @@ public class McpConnectionsDialog extends TitleAreaDialog {
         container.setLayout(new GridLayout(1, false));
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+        List<McpConnectionLog.Entry> entries = connectionLog != null ? connectionLog.recent() : List.of();
+
+        createAverageSummary(container, entries);
+
         Table table = new Table(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         GridData tableData = new GridData(SWT.FILL, SWT.FILL, true, true);
-        tableData.widthHint = 520;
+        tableData.widthHint = 600;
         tableData.heightHint = 300;
         table.setLayoutData(tableData);
 
@@ -72,8 +79,10 @@ public class McpConnectionsDialog extends TitleAreaDialog {
         statusCol.setText("Status");
         statusCol.setWidth(90);
 
-        List<McpConnectionLog.Entry> entries = connectionLog != null ? connectionLog.recent()
-                : List.of();
+        TableColumn durationCol = new TableColumn(table, SWT.RIGHT);
+        durationCol.setText("Response Time");
+        durationCol.setWidth(100);
+
         for (int i = entries.size() - 1; i >= 0; i--) {
             McpConnectionLog.Entry entry = entries.get(i);
             TableItem item = new TableItem(table, SWT.NONE);
@@ -81,6 +90,7 @@ public class McpConnectionsDialog extends TitleAreaDialog {
             item.setText(1, entry.remoteAddress);
             item.setText(2, entry.detail);
             item.setText(3, entry.success ? "OK" : "Denied");
+            item.setText(4, formatDuration(entry.durationMillis));
         }
 
         if (entries.isEmpty()) {
@@ -90,6 +100,42 @@ public class McpConnectionsDialog extends TitleAreaDialog {
         return area;
     }
 
+    /** Shows the average response time per remote address, across all recorded (measured) requests. */
+    private void createAverageSummary(Composite parent, List<McpConnectionLog.Entry> entries) {
+        Map<String, long[]> totals = new LinkedHashMap<>(); // remoteAddress -> [sumMillis, count]
+        for (McpConnectionLog.Entry entry : entries) {
+            if (entry.durationMillis < 0) {
+                continue;
+            }
+            long[] agg = totals.computeIfAbsent(entry.remoteAddress, key -> new long[2]);
+            agg[0] += entry.durationMillis;
+            agg[1]++;
+        }
+        if (totals.isEmpty()) {
+            return;
+        }
+
+        StringBuilder summary = new StringBuilder("Avg response time — ");
+        boolean first = true;
+        for (Map.Entry<String, long[]> agg : totals.entrySet()) {
+            if (!first) {
+                summary.append("  |  ");
+            }
+            first = false;
+            long avg = agg.getValue()[0] / agg.getValue()[1];
+            summary.append(agg.getKey()).append(": ").append(avg).append("ms (n=").append(agg.getValue()[1])
+                    .append(')');
+        }
+
+        Label label = new Label(parent, SWT.NONE);
+        label.setText(summary.toString());
+        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+    }
+
+    private String formatDuration(long durationMillis) {
+        return durationMillis < 0 ? "—" : durationMillis + " ms";
+    }
+
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
@@ -97,6 +143,6 @@ public class McpConnectionsDialog extends TitleAreaDialog {
 
     @Override
     protected Point getInitialSize() {
-        return new Point(600, 420);
+        return new Point(680, 460);
     }
 }

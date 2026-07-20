@@ -159,8 +159,10 @@ public class McpHttpServer {
                 for (JsonElement element : parsed.getAsJsonArray()) {
                     if (element.isJsonObject()) {
                         JsonObject requestObj = element.getAsJsonObject();
+                        long start = System.nanoTime();
                         JsonObject response = dispatcher.dispatch(requestObj);
-                        connectionLog.record(remote, describe(requestObj), true);
+                        long durationMillis = (System.nanoTime() - start) / 1_000_000;
+                        connectionLog.record(remote, describe(requestObj), true, durationMillis);
                         if (response != null) {
                             responses.add(response);
                         }
@@ -181,8 +183,10 @@ public class McpHttpServer {
             }
 
             JsonObject requestObj = parsed.getAsJsonObject();
+            long start = System.nanoTime();
             JsonObject response = dispatcher.dispatch(requestObj);
-            connectionLog.record(remote, describe(requestObj), true);
+            long durationMillis = (System.nanoTime() - start) / 1_000_000;
+            connectionLog.record(remote, describe(requestObj), true, durationMillis);
             if (response == null) {
                 // Notification — acknowledge with no content.
                 exchange.sendResponseHeaders(202, -1);
