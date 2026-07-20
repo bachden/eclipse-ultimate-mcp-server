@@ -27,7 +27,7 @@ The server runs locally inside Eclipse. It does not start a separate project pro
 2. Add this update site:
 
 ~~~text
-https://bachden.github.io/eclipse-ultimate-mcp-server/
+https://bachden.github.io/eclipse-ultimate/
 ~~~
 
 3. Select **Eclipse Ultimate MCP Server**.
@@ -299,7 +299,7 @@ The repository has two workflows:
 Published update site:
 
 ~~~text
-https://bachden.github.io/eclipse-ultimate-mcp-server/
+https://bachden.github.io/eclipse-ultimate/
 ~~~
 
 A normal browser may show 404 at the root because p2 repositories do not require an HTML index. Use the URL in Eclipse's **Install New Software...** dialog.
