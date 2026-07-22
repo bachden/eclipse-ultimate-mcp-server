@@ -56,8 +56,11 @@ After editing:
 1. Read the changed resource back.
 2. Run `organize_imports` and `format_code` for changed Java files where appropriate.
 3. Recheck `get_compilation_errors` on affected files or projects.
-4. Run focused tests before broader tests.
-5. Inspect `git_diff` to confirm scope.
+4. Use `build_project` for a synchronous full or incremental Eclipse build when builder output matters.
+5. Run focused tests before broader tests.
+6. Inspect `git_diff` to confirm scope.
+
+Use `clean_projects` only when a clean build is needed. Omit `projectNames` only when cleaning the entire workspace is intentional.
 
 When direct changes are authorized, apply them directly. Use `show_proposed_changes` only when the user explicitly requests a preview or manual comparison.
 

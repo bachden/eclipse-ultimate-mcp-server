@@ -1,6 +1,6 @@
 # Eclipse Ultimate MCP Tool Reference
 
-This document lists the tools advertised by the Eclipse Ultimate MCP Server runtime. It was generated from the live `tools/list` catalogue and currently covers **87 tools**.
+This document lists the tools advertised by the Eclipse Ultimate MCP Server runtime. It was generated from the live `tools/list` catalogue and currently covers **89 tools**.
 
 ## Availability
 
@@ -19,7 +19,7 @@ This document lists the tools advertised by the Eclipse Ultimate MCP Server runt
 
 ## Tool Index
 
-- [Workspace and IDE](#workspace-and-ide) (13)
+- [Workspace and IDE](#workspace-and-ide) (15)
 - [Java and JDT](#java-and-jdt) (21)
 - [File and resource editing](#file-and-resource-editing) (10)
 - [Maven and m2e](#maven-and-m2e) (6)
@@ -28,6 +28,34 @@ This document lists the tools advertised by the Eclipse Ultimate MCP Server runt
 - [Launch and debug](#launch-and-debug) (19)
 
 ## Workspace and IDE
+
+### `build_project`
+
+Build one open Eclipse project and wait for its configured builders to finish. Supports incremental (default) and full builds, and returns problem marker counts.
+
+Input contract:
+
+```ts
+declare const tools: { mcp__eclipse_ultimate__build_project(args: {
+  // Build kind: incremental (default) or full
+  buildKind?: string;
+  // The open Eclipse project to build
+  projectName: string;
+}): Promise<CallToolResult>; };
+```
+
+### `clean_projects`
+
+Clean configured builders for selected open Eclipse projects and wait for completion. Omit projectNames to clean every open project in the workspace.
+
+Input contract:
+
+```ts
+declare const tools: { mcp__eclipse_ultimate__clean_projects(args: {
+  // Optional project names to clean; omit to clean every open project in the workspace
+  projectNames?: Array<string>;
+}): Promise<CallToolResult>; };
+```
 
 ### `check_for_updates`
 
@@ -1024,13 +1052,13 @@ declare const tools: { mcp__eclipse_ultimate__resolve_maven_dependency(args: {
 
 ### `get_mylyn_build_log`
 
-Read console output for the newest matching cached Mylyn build through its build connector. Filter by planId/planName or buildNumber; output is bounded by maxChars.
+Read console output for an exact Mylyn build number, or the current last build when buildNumber is omitted. Cached metadata is used when possible; with a plan selector the connector can load builds that are not cached. Output is bounded by maxChars.
 
 Input contract:
 
 ```ts
 declare const tools: { mcp__eclipse_ultimate__get_mylyn_build_log(args: {
-  // Optional exact build number; omit to use the newest matching cached build
+  // Optional exact build number; omit for the current last matching build. A plan selector is required when the requested build is not already cached
   buildNumber?: number;
   // Optional exact connector kind used to disambiguate servers sharing a URL
   connectorKind?: string;
@@ -1085,7 +1113,7 @@ declare const tools: { mcp__eclipse_ultimate__get_mylyn_task_repository(args: {
 
 ### `list_mylyn_build_servers`
 
-List build servers configured in Mylyn Builds (including Jenkins), with connector, connection status and cached plan/build counts. Credentials are never returned.
+List build servers configured in Mylyn Builds (including Jenkins), optionally filtered by connector kind and server name using case-insensitive substring or regex matching. Returns connection status and cached plan/build counts; credentials are never returned.
 
 Input contract:
 
@@ -1093,12 +1121,16 @@ Input contract:
 declare const tools: { mcp__eclipse_ultimate__list_mylyn_build_servers(args: {
   // Optional exact connector kind, as returned by this tool
   connectorKind?: string;
+  // Optional case-insensitive substring matched against the build server name
+  nameIlike?: string;
+  // Optional Java regular expression searched within the build server name; mutually exclusive with nameIlike
+  nameRegex?: string;
 }): Promise<CallToolResult>; };
 ```
 
 ### `list_mylyn_task_repositories`
 
-List Mylyn Task Repositories configured in Eclipse, optionally filtered by connector kind. Credentials and other secrets are never returned.
+List Mylyn Task Repositories configured in Eclipse, optionally filtered by connector kind and repository name using case-insensitive substring or regex matching. Credentials and other secrets are never returned.
 
 Input contract:
 
@@ -1106,6 +1138,10 @@ Input contract:
 declare const tools: { mcp__eclipse_ultimate__list_mylyn_task_repositories(args: {
   // Optional exact connector kind, as returned by this tool
   connectorKind?: string;
+  // Optional case-insensitive substring matched against the task repository name
+  nameIlike?: string;
+  // Optional Java regular expression searched within the task repository name; mutually exclusive with nameIlike
+  nameRegex?: string;
 }): Promise<CallToolResult>; };
 ```
 

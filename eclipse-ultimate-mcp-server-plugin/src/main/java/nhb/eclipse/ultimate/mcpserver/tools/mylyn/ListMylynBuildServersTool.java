@@ -28,23 +28,27 @@ public class ListMylynBuildServersTool implements McpTool {
 
     @Override
     public String description() {
-        return "List build servers configured in Mylyn Builds (including Jenkins), with connector, connection "
-                + "status and cached plan/build counts. Credentials are never returned.";
+        return "List build servers configured in Mylyn Builds (including Jenkins), optionally filtered by "
+                + "connector kind and server name using case-insensitive substring or regex matching. Returns "
+                + "connection status and cached plan/build counts; credentials are never returned.";
     }
 
     @Override
     public JsonObject inputSchema() {
         JsonObject schema = Schemas.object();
         Schemas.prop(schema, "connectorKind", "string", "Optional exact connector kind, as returned by this tool");
+        MylynNameFilter.addSchema(schema, "build server");
         return schema;
     }
 
     @Override
     public String execute(JsonObject arguments) {
         String connectorKind = Schemas.optString(arguments, "connectorKind", "").trim();
+        MylynNameFilter nameFilter = MylynNameFilter.from(arguments);
         IBuildModel model = BuildsUi.getModel();
         List<IBuildServer> servers = new ArrayList<>(model.getServers());
-        servers.removeIf(server -> !connectorKind.isEmpty() && !connectorKind.equals(server.getConnectorKind()));
+        servers.removeIf(server -> (!connectorKind.isEmpty() && !connectorKind.equals(server.getConnectorKind()))
+                || !nameFilter.matches(server.getName()));
         servers.sort(
                 Comparator.comparing(IBuildServer::getConnectorKind, Comparator.nullsFirst(String::compareToIgnoreCase))
                         .thenComparing(IBuildServer::getName, Comparator.nullsFirst(String::compareToIgnoreCase))

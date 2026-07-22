@@ -25,23 +25,27 @@ public class ListMylynTaskRepositoriesTool implements McpTool {
 
     @Override
     public String description() {
-        return "List Mylyn Task Repositories configured in Eclipse, optionally filtered by connector kind. "
-                + "Credentials and other secrets are never returned.";
+        return "List Mylyn Task Repositories configured in Eclipse, optionally filtered by connector kind "
+                + "and repository name using case-insensitive substring or regex matching. Credentials and other "
+                + "secrets are never returned.";
     }
 
     @Override
     public JsonObject inputSchema() {
         JsonObject schema = Schemas.object();
         Schemas.prop(schema, "connectorKind", "string", "Optional exact connector kind, as returned by this tool");
+        MylynNameFilter.addSchema(schema, "task repository");
         return schema;
     }
 
     @Override
     public String execute(JsonObject arguments) {
         String connectorKind = Schemas.optString(arguments, "connectorKind", "").trim();
+        MylynNameFilter nameFilter = MylynNameFilter.from(arguments);
         List<TaskRepository> repositories = new ArrayList<>(TasksUi.getRepositoryManager().getAllRepositories());
         repositories.removeIf(
-                repository -> !connectorKind.isEmpty() && !connectorKind.equals(repository.getConnectorKind()));
+                repository -> (!connectorKind.isEmpty() && !connectorKind.equals(repository.getConnectorKind()))
+                        || !nameFilter.matches(repository.getRepositoryLabel()));
         repositories.sort(Comparator
                 .comparing(TaskRepository::getConnectorKind, Comparator.nullsFirst(String::compareToIgnoreCase))
                 .thenComparing(TaskRepository::getRepositoryLabel, Comparator.nullsFirst(String::compareToIgnoreCase))

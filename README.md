@@ -211,6 +211,7 @@ Exact tool names and JSON input schemas are advertised through tools/list.
 - plain-text and regular-expression search;
 - get Java source, method source, class outlines and references;
 - inspect compilation errors and project dependencies;
+- clean selected projects or the whole workspace, and run full/incremental project builds;
 - format Java code, organize imports, apply JDT quick fixes and run Clean Up profiles;
 - identify and open the file currently active in Eclipse;
 - show proposed changes in Eclipse Compare;
@@ -238,9 +239,10 @@ Exact tool names and JSON input schemas are advertised through tools/list.
 
 When the corresponding Mylyn bundles are installed:
 
-- list and inspect configured Mylyn Task Repositories;
-- list Mylyn Builds servers such as Jenkins;
-- read cached plans, recent builds and bounded console logs;
+- list and inspect configured Mylyn Task Repositories, with case-insensitive name or regex filters;
+- list Mylyn Builds servers such as Jenkins with the same name filters;
+- read cached plans and recent builds;
+- read bounded console logs for an exact build number or the current last build, loading uncached build metadata through the connector when a plan is identified;
 - optionally refresh a build server configuration through its Mylyn connector;
 - redact passwords, tokens and credential properties from all tool output.
 
